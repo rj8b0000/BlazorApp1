@@ -1,0 +1,112 @@
+.app-layout[b-livsr9n6wz] {
+    display: flex;
+    min-height: 100vh;
+    background-color: var(--bg-color);
+}
+
+.app-sidebar[b-livsr9n6wz] {
+    width: 260px;
+    background-color: var(--card-bg);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    z-index: 10;
+}
+
+.app-main[b-livsr9n6wz] {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.app-header[b-livsr9n6wz] {
+    height: 64px;
+    background-color: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+.user-profile[b-livsr9n6wz] {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+}
+
+.user-avatar[b-livsr9n6wz] {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.user-name[b-livsr9n6wz] {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.app-content[b-livsr9n6wz] {
+    flex: 1;
+    padding: 2rem;
+}
+
+.content-wrapper[b-livsr9n6wz] {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+#blazor-error-ui[b-livsr9n6wz] {
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+#blazor-error-ui .dismiss[b-livsr9n6wz] {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .app-layout[b-livsr9n6wz] {
+        flex-direction: column;
+    }
+    
+    .app-sidebar[b-livsr9n6wz] {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+    
+    .app-header[b-livsr9n6wz] {
+        padding: 0 1rem;
+    }
+    
+    .app-content[b-livsr9n6wz] {
+        padding: 1rem;
+    }
+}

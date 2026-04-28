@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portfolio.API", "Portfolio.API\Portfolio.API.csproj", "{09792FB6-5B13-4CE2-81B7-BAD823E6BB0D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portfolio.Admin", "Portfolio.Admin\Portfolio.Admin.csproj", "{7BBA6A4D-13B0-4F45-AEF7-B4DA3C9C4D9C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{09792FB6-5B13-4CE2-81B7-BAD823E6BB0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09792FB6-5B13-4CE2-81B7-BAD823E6BB0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09792FB6-5B13-4CE2-81B7-BAD823E6BB0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09792FB6-5B13-4CE2-81B7-BAD823E6BB0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BBA6A4D-13B0-4F45-AEF7-B4DA3C9C4D9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BBA6A4D-13B0-4F45-AEF7-B4DA3C9C4D9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BBA6A4D-13B0-4F45-AEF7-B4DA3C9C4D9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BBA6A4D-13B0-4F45-AEF7-B4DA3C9C4D9C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

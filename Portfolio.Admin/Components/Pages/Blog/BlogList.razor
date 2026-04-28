@@ -1,0 +1,179 @@
+@page "/admin/blog"
+
+@using Portfolio.Admin.Models.Blog
+@using Portfolio.Admin.Components.Shared
+@using Portfolio.Admin.Services
+
+@inject BlogApiService BlogService
+@inject NavigationManager Navigation
+
+<div class="page-header">
+    <div class="page-header-info">
+        <div class="breadcrumb">
+            <a href="">Dashboard</a>
+            <span class="breadcrumb-separator">/</span>
+            <span>Blogs</span>
+        </div>
+        <h2 class="page-title">Blog Management</h2>
+    </div>
+    <button class="btn-primary btn-action bg-primary" @onclick="CreateNewBlog">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        Create New
+    </button>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">All Blogs</h3>
+        <div class="filters-bar" style="margin-bottom: 0;">
+            <div class="filter-input">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" class="form-control" placeholder="Search blogs..." />
+            </div>
+        </div>
+    </div>
+
+    @if (_loading)
+    {
+        <div class="state-container">
+            <div class="spinner"></div>
+            <p>Loading your blogs...</p>
+        </div>
+    }
+    else if (!_blogs.Any())
+    {
+        <div class="state-container">
+            <svg class="state-icon" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <h3 class="state-title">No blogs found</h3>
+            <p>You haven't written any blogs yet. Create one to get started.</p>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="saas-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Status</th>
+                        <th>Created Date</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var blog in _blogs)
+                    {
+                        <tr>
+                            <td style="font-weight: 500;">@blog.Title</td>
+                            <td>
+                                <span class="badge @(blog.IsPublished ? "badge-success" : "badge-warning")">
+                                    @(blog.IsPublished ? "Published" : "Draft")
+                                </span>
+                            </td>
+                            <td style="color: var(--text-muted);">@blog.CreatedAt.ToShortDateString()</td>
+                            <td style="text-align: right;">
+                                <button class="btn-action btn-action-edit" @onclick="() => EditBlog(blog.Id)" title="Edit">
+                                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                    Edit
+                                </button>
+                                <button class="btn-action btn-action-delete" @onclick="() => ConfirmDelete(blog.Id)" title="Delete">
+                                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+<AlertDialog Message="@_dialogMessage"
+             Type="@_dialogType"
+             Visible="@_dialogVisible"
+             ShowCancel="@(_dialogType == "warning")"
+             OnClose="HandleDialogClose" />
+
+@code {
+
+    private List<BlogResponse> _blogs = new();
+
+    private bool _loading = true;
+
+    private bool _dialogVisible = false;
+
+    private string _dialogMessage = "";
+
+    private string _dialogType = "success";
+
+    private Guid _blogToDelete;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadBlogs();
+    }
+
+    private async Task LoadBlogs()
+    {
+        try
+        {
+            _blogs = await BlogService.GetBlogsAsync();
+        }
+        catch (Exception ex)
+        {
+            _dialogMessage = ex.Message;
+            _dialogType = "error";
+            _dialogVisible = true;
+        }
+        finally
+        {
+            _loading = false;
+            StateHasChanged();
+        }
+    }
+
+    private void CreateNewBlog()
+    {
+        Navigation.NavigateTo("/admin/blog/create");
+    }
+
+    private void EditBlog(Guid id)
+    {
+        Navigation.NavigateTo($"/admin/blog/edit/{id}");
+    }
+
+    private void ConfirmDelete(Guid id)
+    {
+        _blogToDelete = id;
+
+        _dialogMessage = "Are you sure you want to delete this blog?";
+        _dialogType = "warning";
+
+        _dialogVisible = true;
+    }
+
+    private async void HandleDialogClose(bool confirmed)
+    {
+        _dialogVisible = false;
+
+        if (_dialogType == "warning" && confirmed)
+        {
+            try
+            {
+                await BlogService.DeleteBlogAsync(_blogToDelete);
+
+                await LoadBlogs();
+            }
+            catch (Exception ex)
+            {
+                _dialogMessage = ex.Message;
+                _dialogType = "error";
+                _dialogVisible = true;
+            }
+        }
+        
+        StateHasChanged();
+    }
+
+}

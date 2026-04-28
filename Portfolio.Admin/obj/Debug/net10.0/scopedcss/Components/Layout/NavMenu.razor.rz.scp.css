@@ -1,0 +1,109 @@
+.sidebar-header[b-5pasltmq3b] {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-brand[b-5pasltmq3b] {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-color);
+    text-decoration: none;
+    letter-spacing: -0.025em;
+}
+
+.navbar-toggler[b-5pasltmq3b] {
+    display: none;
+}
+
+.navbar-toggler-icon[b-5pasltmq3b] {
+    display: none;
+}
+
+.nav-scrollable[b-5pasltmq3b] {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem 1rem;
+}
+
+.nav-menu[b-5pasltmq3b] {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.nav-item[b-5pasltmq3b] {
+    width: 100%;
+}
+
+[b-5pasltmq3b] .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 1rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+[b-5pasltmq3b] .nav-icon {
+    color: #9ca3af;
+    transition: color 0.2s ease;
+}
+
+[b-5pasltmq3b] .nav-link:hover {
+    background-color: #f3f4f6;
+    color: var(--text-color);
+}
+
+[b-5pasltmq3b] .nav-link:hover .nav-icon {
+    color: var(--text-muted);
+}
+
+[b-5pasltmq3b] .nav-link.active {
+    background-color: rgba(37, 150, 190, 0.1);
+    color: var(--primary);
+    font-weight: 600;
+}
+
+[b-5pasltmq3b] .nav-link.active .nav-icon {
+    color: var(--primary);
+}
+
+@media (max-width: 768px) {
+    .sidebar-header[b-5pasltmq3b] {
+        justify-content: space-between;
+    }
+    
+    .navbar-toggler-icon[b-5pasltmq3b] {
+        display: block;
+        cursor: pointer;
+        color: var(--text-muted);
+        position: absolute;
+        top: 1.25rem;
+        right: 1rem;
+        z-index: 20;
+    }
+    
+    .nav-scrollable[b-5pasltmq3b] {
+        display: none;
+        position: absolute;
+        top: 64px;
+        left: 0;
+        right: 0;
+        background-color: var(--card-bg);
+        border-bottom: 1px solid var(--border-color);
+        z-index: 50;
+    }
+    
+    .navbar-toggler:checked ~ .nav-scrollable[b-5pasltmq3b] {
+        display: block;
+    }
+}

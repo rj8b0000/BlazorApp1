@@ -1,0 +1,93 @@
+@inject IJSRuntime JSRuntime
+@implements IAsyncDisposable
+
+<div class="rich-text-wrapper">
+    <div @ref="_toolbarElement">
+        <span class="ql-formats">
+            <select class="ql-header">
+                <option value="1"></option>
+                <option value="2"></option>
+                <option value="3"></option>
+                <option selected></option>
+            </select>
+        </span>
+        <span class="ql-formats">
+            <button class="ql-bold"></button>
+            <button class="ql-italic"></button>
+            <button class="ql-underline"></button>
+        </span>
+        <span class="ql-formats">
+            <button class="ql-list" value="ordered"></button>
+            <button class="ql-list" value="bullet"></button>
+        </span>
+        <span class="ql-formats">
+            <button class="ql-link"></button>
+            <button class="ql-image"></button>
+        </span>
+        <span class="ql-formats">
+            <button class="ql-clean"></button>
+        </span>
+    </div>
+    <div @ref="_editorElement" style="min-height: @MinHeight; background-color: #fff;"></div>
+</div>
+
+@code {
+    [Parameter]
+    public string Value { get; set; }
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+    [Parameter]
+    public string MinHeight { get; set; } = "300px";
+
+    private ElementReference _editorElement;
+    private ElementReference _toolbarElement;
+    private DotNetObjectReference<RichTextEditor> _objRef;
+    private bool _isInitialized;
+    private string _lastValue;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _objRef = DotNetObjectReference.Create(this);
+            _lastValue = Value;
+            await JSRuntime.InvokeVoidAsync("quillInterop.init", _editorElement, _toolbarElement, _objRef, Value);
+            _isInitialized = true;
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (_isInitialized && Value != _lastValue)
+        {
+            _lastValue = Value;
+            // Update external value if it changes from outside
+            await JSRuntime.InvokeVoidAsync("quillInterop.setContent", _editorElement, Value);
+        }
+    }
+
+    [JSInvokable]
+    public async Task OnContentChanged(string html)
+    {
+        if (_lastValue != html)
+        {
+            _lastValue = html;
+            await ValueChanged.InvokeAsync(html);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        _objRef?.Dispose();
+        if (_isInitialized)
+        {
+            try
+            {
+                // Optional cleanup
+            }
+            catch { }
+        }
+    }
+}

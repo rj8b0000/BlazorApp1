@@ -1,0 +1,110 @@
+@page "/admin/blog/edit/{Id:guid}"
+
+@using Portfolio.Admin.Models.Blog
+@using Portfolio.Admin.Components.Blog
+@using Portfolio.Admin.Components.Shared
+@using Portfolio.Admin.Services
+
+@inject BlogApiService BlogService
+@inject NavigationManager Navigation
+
+<h3>Edit Blog</h3>
+
+@if (_loading)
+{
+    <p>Loading blog...</p>
+}
+else
+{
+    <BlogForm Model="_model"
+              OnSubmit="HandleSubmit"
+              IsSubmitting="_isSubmitting" />
+}
+
+<AlertDialog Message="@_message"
+             Type="@_messageType"
+             Visible="@_showDialog"
+             OnClose="HandleDialogClose" />
+
+@code {
+
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private CreateBlogRequest _model = new();
+
+    private bool _loading = true;
+
+    private bool _isSubmitting = false;
+
+    private bool _showDialog = false;
+
+    private string _message = "";
+
+    private string _messageType = "success";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadBlog();
+    }
+
+    private async Task LoadBlog()
+    {
+        try
+        {
+            var blog = await BlogService.GetBlogByIdAsync(Id);
+
+            _model = new CreateBlogRequest
+            {
+                Title = blog.Title,
+                HtmlContent = blog.HtmlContent,
+                ShortDescription = blog.ShortDescription,
+                Tags = blog.Tags,
+                IsPublished = blog.IsPublished
+            };
+        }
+        catch (Exception ex)
+        {
+            _message = ex.Message;
+            _messageType = "error";
+            _showDialog = true;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task HandleSubmit(CreateBlogRequest request)
+    {
+        if (_isSubmitting)
+            return;
+
+        try
+        {
+            _isSubmitting = true;
+
+            await BlogService.UpdateBlogAsync(Id, request);
+
+            _message = "Blog updated successfully!";
+            _messageType = "success";
+            _showDialog = true;
+        }
+        catch (Exception ex)
+        {
+            _message = ex.Message;
+            _messageType = "error";
+            _showDialog = true;
+        }
+        finally
+        {
+            _isSubmitting = false;
+        }
+    }
+
+    private void HandleDialogClose()
+    {
+        _showDialog = false;
+    }
+
+}
