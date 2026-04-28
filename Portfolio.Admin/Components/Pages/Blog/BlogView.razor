@@ -1,0 +1,150 @@
+@page "/admin/blog/view/{Id:guid}"
+
+@using Portfolio.Admin.Models.Blog
+@using Portfolio.Admin.Services
+
+@inject BlogApiService BlogService
+@inject NavigationManager Navigation
+@inject IConfiguration Configuration
+
+<div class="page-header">
+    <div class="page-header-info">
+        <div class="breadcrumb">
+            <a href="">Dashboard</a>
+            <span class="breadcrumb-separator">/</span>
+            <a href="admin/blog">Blogs</a>
+            <span class="breadcrumb-separator">/</span>
+            <span>View</span>
+        </div>
+        <h2 class="page-title">Blog Details</h2>
+    </div>
+    <div style="display: flex; gap: 1rem;">
+        <button class="btn-action" style="border: 1px solid var(--border-color); color: var(--text-color); padding: 0.5rem 1rem; border-radius: 6px;" @onclick="GoBack">
+            Back to List
+        </button>
+        <button class="btn-primary btn-action" @onclick="EditBlog">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            Edit Blog
+        </button>
+    </div>
+</div>
+
+@if (_loading)
+{
+    <div class="state-container">
+        <div class="spinner"></div>
+        <p>Loading blog details...</p>
+    </div>
+}
+else if (!string.IsNullOrEmpty(_errorMessage))
+{
+    <div class="state-container">
+        <p style="color: #ef4444;">@_errorMessage</p>
+    </div>
+}
+else if (_blog != null)
+{
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">General Information</h3>
+            <span class="badge @(_blog.IsPublished ? "badge-success" : "badge-warning")">
+                @(_blog.IsPublished ? "Published" : "Draft")
+            </span>
+        </div>
+        <div class="card-body form-section">
+            <div class="form-group">
+                <label class="form-label" style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase;">Title</label>
+                <div style="font-size: 1rem; font-weight: 500;">@_blog.Title</div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase;">Short Description</label>
+                <div>@_blog.ShortDescription</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase;">Slug</label>
+                <div>@_blog.Slug</div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase;">Created At</label>
+                <div>@_blog.CreatedAt.ToString("MMMM dd, yyyy hh:mm tt")</div>
+            </div>
+
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label class="form-label" style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase;">Tags</label>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    @foreach (var tag in _blog.Tags.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        <span style="background-color: #f1f5f9; color: #475569; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.875rem;">
+                            @tag.Trim()
+                        </span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(_blog.CoverImageUrl))
+    {
+        var imgUrl = _blog.CoverImageUrl.StartsWith("http") 
+            ? _blog.CoverImageUrl 
+            : $"{Configuration["ApiSettings:BaseUrl"]?.TrimEnd('/')}/{_blog.CoverImageUrl.TrimStart('/')}";
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Cover Image</h3>
+            </div>
+            <div class="card-body">
+                <img src="@imgUrl" alt="Cover" style="max-width: 100%; border-radius: 8px; border: 1px solid var(--border-color); object-fit: cover; max-height: 400px;" />
+            </div>
+        </div>
+    }
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Content</h3>
+        </div>
+        <div class="card-body">
+            <div style="padding: 1rem; border: 1px solid var(--border-color); border-radius: 8px; background-color: #fff; min-height: 200px;">
+                @((MarkupString)_blog.HtmlContent)
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private BlogResponse _blog;
+    private bool _loading = true;
+    private string _errorMessage = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _blog = await BlogService.GetBlogByIdAsync(Id);
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = ex.Message;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/admin/blog");
+    }
+
+    private void EditBlog()
+    {
+        Navigation.NavigateTo($"/admin/blog/edit/{Id}");
+    }
+}

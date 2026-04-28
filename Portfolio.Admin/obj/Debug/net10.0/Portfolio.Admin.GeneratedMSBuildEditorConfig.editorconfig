@@ -42,6 +42,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9CbG9nL0Jsb2dMaXN0LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Volumes/RudrSSD/Projects/RiderProjects/BlazorApp1/Portfolio.Admin/Components/Pages/Blog/BlogView.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9CbG9nL0Jsb2dWaWV3LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Volumes/RudrSSD/Projects/RiderProjects/BlazorApp1/Portfolio.Admin/Components/Pages/Counter.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Db3VudGVyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 

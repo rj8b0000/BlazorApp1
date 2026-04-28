@@ -89,3 +89,4 @@
 /Volumes/RudrSSD/Projects/RiderProjects/BlazorApp1/Portfolio.Admin/obj/Debug/net10.0/compressed/aam0rfilw9-{0}-6swbmdkz3h-6swbmdkz3h.gz
 /Volumes/RudrSSD/Projects/RiderProjects/BlazorApp1/Portfolio.Admin/obj/Debug/net10.0/compressed/e3hcsuamv5-{0}-raj9calk05-raj9calk05.gz
 /Volumes/RudrSSD/Projects/RiderProjects/BlazorApp1/Portfolio.Admin/obj/Debug/net10.0/Portfoli.2122DE20.Up2Date
+/Volumes/RudrSSD/Projects/RiderProjects/BlazorApp1/Portfolio.Admin/obj/Debug/net10.0/Portfolio.Admin.sourcelink.json

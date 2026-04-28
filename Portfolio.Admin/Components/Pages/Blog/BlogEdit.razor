@@ -7,6 +7,7 @@
 
 @inject BlogApiService BlogService
 @inject NavigationManager Navigation
+@inject IConfiguration Configuration
 
 <h3>Edit Blog</h3>
 
@@ -17,6 +18,7 @@
 else
 {
     <BlogForm Model="_model"
+              ExistingImageUrl="@_existingImageUrl"
               OnSubmit="HandleSubmit"
               IsSubmitting="_isSubmitting" />
 }
@@ -43,6 +45,8 @@ else
 
     private string _messageType = "success";
 
+    private string _existingImageUrl = "";
+
     protected override async Task OnInitializedAsync()
     {
         await LoadBlog();
@@ -53,6 +57,13 @@ else
         try
         {
             var blog = await BlogService.GetBlogByIdAsync(Id);
+
+            _existingImageUrl = blog.CoverImageUrl;
+            if (!string.IsNullOrEmpty(_existingImageUrl) && !_existingImageUrl.StartsWith("http"))
+            {
+                var baseUrl = Configuration["ApiSettings:BaseUrl"]?.TrimEnd('/') ?? "";
+                _existingImageUrl = $"{baseUrl}/{_existingImageUrl.TrimStart('/')}";
+            }
 
             _model = new CreateBlogRequest
             {
