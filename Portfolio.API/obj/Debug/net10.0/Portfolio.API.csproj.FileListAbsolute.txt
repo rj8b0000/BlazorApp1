@@ -168,3 +168,4 @@
 /Volumes/RudrSSD/Projects/RiderProjects/BlazorApp1/Portfolio.API/bin/Debug/net10.0/Swashbuckle.AspNetCore.SwaggerGen.dll
 /Volumes/RudrSSD/Projects/RiderProjects/BlazorApp1/Portfolio.API/bin/Debug/net10.0/Swashbuckle.AspNetCore.SwaggerUI.dll
 /Volumes/RudrSSD/Projects/RiderProjects/BlazorApp1/Portfolio.API/obj/Debug/net10.0/Portfolio.API.MvcApplicationPartsAssemblyInfo.cs
+/Volumes/RudrSSD/Projects/RiderProjects/BlazorApp1/Portfolio.API/obj/Debug/net10.0/Portfolio.API.sourcelink.json
