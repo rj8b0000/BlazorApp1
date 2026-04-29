@@ -53,6 +53,16 @@ public class BlogService : IBlogService
         if (blog == null)
             throw new Exception("Blog not found");
 
+        if (dto.CoverImage != null)
+        {
+            var imagePath = await FileUploadHelper.SaveFileAsync(
+                dto.CoverImage,
+                _environment.WebRootPath,
+                "uploads/blogs"
+            );
+            blog.CoverImageUrl = imagePath;
+        }
+
         blog.Title = dto.Title;
         blog.Slug = SlugHelpers.Generate(dto.Title);
         blog.HtmlContent = dto.HtmlContent;

@@ -24,7 +24,7 @@ public class BlogController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(Guid id, UpdateBlogDto dto)
+    public async Task<IActionResult> Update(Guid id, [FromForm] UpdateBlogDto dto)
     {
         await _service.UpdateAsync(id, dto);
 

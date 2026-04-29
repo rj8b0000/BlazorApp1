@@ -7,4 +7,5 @@ public class UpdateBlogDto
     public string ShortDescription { get; set; } = default!;
     public string Tags { get; set; } = string.Empty;
     public bool IsPublished { get; set; }
+    public IFormFile? CoverImage { get; set; }
 }
