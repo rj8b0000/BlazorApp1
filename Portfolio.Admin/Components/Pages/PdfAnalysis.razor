@@ -11,42 +11,131 @@
     </div>
 </div>
 
-<div class="pdf-analysis-container">
+<div class="pdf-analysis-container" style="--left-width: 50%;">
     <div class="pdf-panel">
         <PdfViewerPanel />
     </div>
+    
+    <div class="splitter" @onmousedown="() => {}">
+        <div class="splitter-handle"></div>
+    </div>
+    
     <div class="data-panel">
         <ExtractedDataGrid />
     </div>
 </div>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const container = document.querySelector('.pdf-analysis-container');
+        if (!container) return;
+        
+        const splitter = document.querySelector('.splitter');
+        let isResizing = false;
+
+        splitter.addEventListener('mousedown', function(e) {
+            isResizing = true;
+            document.body.style.cursor = 'col-resize';
+            // Disable pointer events on iframes so mousemove works smoothly over the PDF
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach(i => i.style.pointerEvents = 'none');
+            e.preventDefault(); // Prevent text selection
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (!isResizing) return;
+            
+            const containerRect = container.getBoundingClientRect();
+            // Calculate percentage based on mouse position relative to container
+            let newWidthPercentage = ((e.clientX - containerRect.left) / containerRect.width) * 100;
+            
+            // Constrain between 20% and 80%
+            if (newWidthPercentage < 20) newWidthPercentage = 20;
+            if (newWidthPercentage > 80) newWidthPercentage = 80;
+            
+            container.style.setProperty('--left-width', newWidthPercentage + '%');
+        });
+
+        document.addEventListener('mouseup', function() {
+            if (isResizing) {
+                isResizing = false;
+                document.body.style.cursor = '';
+                // Re-enable pointer events on iframes
+                const iframes = document.querySelectorAll('iframe');
+                iframes.forEach(i => i.style.pointerEvents = '');
+            }
+        });
+    });
+</script>
+
 <style>
     .pdf-analysis-container {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
+        display: flex;
+        flex-direction: row;
         height: calc(100vh - 160px); /* Adjust based on your header/padding */
         min-height: 600px;
+        width: 100%;
     }
     
-    .pdf-panel, .data-panel {
+    .pdf-panel {
+        width: var(--left-width);
         height: 100%;
-        min-width: 0; /* Prevent overflow in grid items */
+        min-width: 0;
+    }
+
+    .splitter {
+        width: 12px;
+        height: 100%;
+        cursor: col-resize;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: transparent;
+        transition: background-color 0.2s;
+        z-index: 10;
+        margin: 0 4px;
+    }
+    
+    .splitter:hover, .splitter:active {
+        background-color: #e2e8f0; /* hover color */
+    }
+
+    .splitter-handle {
+        width: 4px;
+        height: 32px;
+        background-color: #cbd5e1;
+        border-radius: 2px;
+    }
+    
+    .splitter:hover .splitter-handle {
+        background-color: #94a3b8;
+    }
+
+    .data-panel {
+        flex: 1;
+        height: 100%;
+        min-width: 0;
     }
 
     /* Responsive adjustment for smaller screens */
     @@media (max-width: 992px) {
         .pdf-analysis-container {
-            grid-template-columns: 1fr;
+            flex-direction: column;
             height: auto;
         }
         .pdf-panel {
+            width: 100% !important;
             height: 60vh;
             min-height: 500px;
         }
+        .splitter {
+            display: none; /* Hide splitter on mobile */
+        }
         .data-panel {
+            width: 100%;
             height: auto;
             min-height: 500px;
+            margin-top: 20px;
         }
     }
 </style>

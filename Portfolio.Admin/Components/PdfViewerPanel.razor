@@ -15,7 +15,7 @@
     <div style="flex: 1 1 auto; overflow: hidden; position: relative;">
         @if (!string.IsNullOrEmpty(_pdfObjectUrl))
         {
-            <iframe id="pdf-iframe" src="/pdfjs/pdf-viewer.html" style="width: 100%; height: 100%; border: none;" onload="sendPdfUrlToIframe('@_pdfObjectUrl')"></iframe>
+            <iframe id="pdf-iframe" src="/pdfjs/web/viewer.html?file=@(_pdfObjectUrl)" style="width: 100%; height: 100%; border: none;"></iframe>
         }
         else
         {
@@ -33,13 +33,13 @@
         const blob = new Blob([new Uint8Array(bytes)], { type: contentType });
         return URL.createObjectURL(blob);
     };
-
-    window.sendPdfUrlToIframe = function(url) {
+    
+    window.updatePdfIframe = function(url) {
         const iframe = document.getElementById('pdf-iframe');
-        if (iframe && iframe.contentWindow) {
-            iframe.contentWindow.postMessage({ type: 'load-pdf', url: url }, '*');
+        if (iframe && iframe.contentWindow && iframe.contentWindow.PDFViewerApplication) {
+            iframe.contentWindow.PDFViewerApplication.open({ url: url });
         }
-    };
+    }
 </script>
 
 @code {
@@ -59,17 +59,19 @@
                 var bytes = memoryStream.ToArray();
 
                 // Create object URL from byte array
-                _pdfObjectUrl = await JSRuntime.InvokeAsync<string>("window.createObjectUrl", bytes, file.ContentType);
+                var newUrl = await JSRuntime.InvokeAsync<string>("window.createObjectUrl", bytes, file.ContentType);
                 
-                // If iframe is already there, it will trigger the onload.
-                // If it's already loaded and we just changed the URL, we need to send it explicitly
-                await JSRuntime.InvokeVoidAsync("window.sendPdfUrlToIframe", _pdfObjectUrl);
-                
-                StateHasChanged();
+                if (string.IsNullOrEmpty(_pdfObjectUrl)) {
+                    _pdfObjectUrl = newUrl;
+                    StateHasChanged();
+                } else {
+                    _pdfObjectUrl = newUrl;
+                    // If iframe is already there, update it dynamically to prevent full reload
+                    await JSRuntime.InvokeVoidAsync("window.updatePdfIframe", _pdfObjectUrl);
+                }
             }
             catch (Exception ex)
             {
-                // Handle error (could use the AlertDialog here if needed)
                 Console.WriteLine($"Error uploading file: {ex.Message}");
             }
         }
