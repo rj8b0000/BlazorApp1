@@ -1,0 +1,52 @@
+@page "/pdf-analysis"
+
+<div class="page-header">
+    <div class="page-header-info">
+        <div class="breadcrumb">
+            <a href="">Dashboard</a>
+            <span class="breadcrumb-separator">/</span>
+            <span>Document Analysis</span>
+        </div>
+        <h2 class="page-title">PDF Analysis</h2>
+    </div>
+</div>
+
+<div class="pdf-analysis-container">
+    <div class="pdf-panel">
+        <PdfViewerPanel />
+    </div>
+    <div class="data-panel">
+        <ExtractedDataGrid />
+    </div>
+</div>
+
+<style>
+    .pdf-analysis-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        height: calc(100vh - 160px); /* Adjust based on your header/padding */
+        min-height: 600px;
+    }
+    
+    .pdf-panel, .data-panel {
+        height: 100%;
+        min-width: 0; /* Prevent overflow in grid items */
+    }
+
+    /* Responsive adjustment for smaller screens */
+    @@media (max-width: 992px) {
+        .pdf-analysis-container {
+            grid-template-columns: 1fr;
+            height: auto;
+        }
+        .pdf-panel {
+            height: 60vh;
+            min-height: 500px;
+        }
+        .data-panel {
+            height: auto;
+            min-height: 500px;
+        }
+    }
+</style>

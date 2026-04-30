@@ -1,0 +1,47 @@
+@using Portfolio.Admin.Models
+
+<div class="card" style="height: 100%; display: flex; flex-direction: column;">
+    <div class="card-header" style="flex: 0 0 auto;">
+        <h3 class="card-title">Extracted PO Data</h3>
+    </div>
+    
+    <div class="table-responsive" style="flex: 1 1 auto; overflow-y: auto;">
+        <table class="saas-table">
+            <thead>
+                <tr>
+                    <th>PO Number</th>
+                    <th>Vendor Name</th>
+                    <th>Date</th>
+                    <th>Item Name</th>
+                    <th style="text-align: right;">Qty</th>
+                    <th style="text-align: right;">Unit Price</th>
+                    <th style="text-align: right;">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in _mockData)
+                {
+                    <tr>
+                        <td style="font-weight: 500;">@item.PoNumber</td>
+                        <td>@item.VendorName</td>
+                        <td style="color: var(--text-muted);">@item.Date.ToShortDateString()</td>
+                        <td>@item.ItemName</td>
+                        <td style="text-align: right;">@item.Quantity</td>
+                        <td style="text-align: right;">@item.UnitPrice.ToString("C")</td>
+                        <td style="text-align: right; font-weight: 500; color: var(--primary-color);">@item.Amount.ToString("C")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code {
+    private List<PoData> _mockData = new()
+    {
+        new PoData { PoNumber = "PO-2026-001", VendorName = "TechCorp Inc.", Date = new DateTime(2026, 4, 25), ItemName = "MacBook Pro 16\"", Quantity = 2, UnitPrice = 2499.00m, Amount = 4998.00m },
+        new PoData { PoNumber = "PO-2026-001", VendorName = "TechCorp Inc.", Date = new DateTime(2026, 4, 25), ItemName = "Magic Mouse", Quantity = 2, UnitPrice = 79.00m, Amount = 158.00m },
+        new PoData { PoNumber = "PO-2026-002", VendorName = "Office Supplies Co.", Date = new DateTime(2026, 4, 28), ItemName = "Ergonomic Chair", Quantity = 5, UnitPrice = 350.00m, Amount = 1750.00m },
+        new PoData { PoNumber = "PO-2026-003", VendorName = "Cloud Systems LLC", Date = new DateTime(2026, 4, 30), ItemName = "Server Rack", Quantity = 1, UnitPrice = 1200.00m, Amount = 1200.00m }
+    };
+}

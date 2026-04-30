@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>PDF Viewer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <style>
+        body { margin: 0; padding: 0; background-color: #f1f5f9; overflow: hidden; }
+        #viewer-container { 
+            width: 100vw; 
+            height: 100vh; 
+            overflow: auto; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center;
+        }
+        canvas { 
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            margin: 20px 0;
+            background-color: white;
+        }
+        #controls {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 12px;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+        button {
+            padding: 4px 8px;
+            cursor: pointer;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <button onclick="zoomOut()">-</button>
+        <span id="zoom-level">100%</span>
+        <button onclick="zoomIn()">+</button>
+    </div>
+    <div id="viewer-container"></div>
+
+    <script>
+        const { pdfjsLib } = globalThis;
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        let pdfDoc = null;
+        let scale = 1.0;
+        const container = document.getElementById('viewer-container');
+
+        async function renderPDF(url) {
+            container.innerHTML = '';
+            pdfDoc = await pdfjsLib.getDocument(url).promise;
+            for (let i = 1; i <= pdfDoc.numPages; i++) {
+                await renderPage(i);
+            }
+        }
+
+        async function renderPage(num) {
+            const page = await pdfDoc.getPage(num);
+            const viewport = page.getViewport({ scale });
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            container.appendChild(canvas);
+
+            await page.render({
+                canvasContext: context,
+                viewport: viewport
+            }).promise;
+        }
+
+        function zoomIn() {
+            scale += 0.2;
+            updateZoom();
+        }
+
+        function zoomOut() {
+            if (scale <= 0.4) return;
+            scale -= 0.2;
+            updateZoom();
+        }
+
+        function updateZoom() {
+            document.getElementById('zoom-level').textContent = Math.round(scale * 100) + '%';
+            if (pdfDoc) {
+                const url = pdfDoc._transport.commonobjs.get('URL') || lastUrl;
+                renderPDF(url);
+            }
+        }
+
+        let lastUrl = '';
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'load-pdf') {
+                lastUrl = event.data.url;
+                renderPDF(event.data.url);
+            }
+        });
+    </script>
+</body>
+</html>
