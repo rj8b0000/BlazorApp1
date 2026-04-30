@@ -1,0 +1,99 @@
+########################################
+# Build output
+########################################
+bin/
+obj/
+out/
+publish/
+artifacts/
+
+########################################
+# Visual Studio / Rider / VS Code
+########################################
+.vs/
+.vscode/
+.idea/
+
+*.user
+*.rsuser
+*.suo
+*.userprefs
+
+########################################
+# Logs
+########################################
+*.log
+
+########################################
+# OS files
+########################################
+.DS_Store
+Thumbs.db
+
+########################################
+# ASP.NET Core secrets
+########################################
+secrets.json
+appsettings.Development.json
+
+########################################
+# Publish profiles (local machine)
+########################################
+Properties/PublishProfiles/*.pubxml
+Properties/PublishProfiles/*.pubxml.user
+
+########################################
+# NuGet
+########################################
+*.nupkg
+*.snupkg
+.nuget/packages/
+
+########################################
+# Node tooling (if used in Client)
+########################################
+node_modules/
+package-lock.json
+yarn.lock
+
+########################################
+# Blazor WebAssembly generated files
+########################################
+wwwroot/_framework/
+wwwroot/service-worker-assets.js
+
+########################################
+# Service worker build artifacts
+########################################
+service-worker.js.map
+service-worker.published.js
+
+########################################
+# EF Core temporary files
+########################################
+*Migrations/*Designer.cs
+*.dbmdl
+
+########################################
+# Temp / cache files
+########################################
+*.tmp
+*.temp
+*.cache
+
+########################################
+# Test output
+########################################
+TestResults/
+
+########################################
+# Coverage tools
+########################################
+coverage/
+*.coverage
+*.coveragexml
+
+########################################
+# Docker (if added later)
+########################################
+docker-compose.override.yml
