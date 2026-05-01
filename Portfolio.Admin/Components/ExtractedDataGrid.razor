@@ -1,40 +1,42 @@
 @using Portfolio.Admin.Models
+@using BlazorBlueprint.Components
 
-<div class="card" style="height: 100%; display: flex; flex-direction: column;">
-    <div class="card-header" style="flex: 0 0 auto;">
-        <h3 class="card-title">Extracted PO Data</h3>
-    </div>
-    
-    <div class="table-responsive" style="flex: 1 1 auto; overflow-y: auto;">
-        <table class="saas-table">
-            <thead>
-                <tr>
-                    <th>PO Number</th>
-                    <th>Vendor Name</th>
-                    <th>Date</th>
-                    <th>Item Name</th>
-                    <th style="text-align: right;">Qty</th>
-                    <th style="text-align: right;">Unit Price</th>
-                    <th style="text-align: right;">Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in _mockData)
-                {
-                    <tr>
-                        <td style="font-weight: 500;">@item.PoNumber</td>
-                        <td>@item.VendorName</td>
-                        <td style="color: var(--text-muted);">@item.Date.ToShortDateString()</td>
-                        <td>@item.ItemName</td>
-                        <td style="text-align: right;">@item.Quantity</td>
-                        <td style="text-align: right;">@item.UnitPrice.ToString("C")</td>
-                        <td style="text-align: right; font-weight: 500; color: var(--primary-color);">@item.Amount.ToString("C")</td>
+<BbCard Class="h-full">
+    <BbCardHeader>
+        <BbCardTitle>Extracted PO Data</BbCardTitle>
+    </BbCardHeader>
+    <BbCardContent>
+        <div class="relative w-full overflow-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                        <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">PO Number</th>
+                        <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Vendor Name</th>
+                        <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Date</th>
+                        <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Item Name</th>
+                        <th class="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Qty</th>
+                        <th class="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Price</th>
+                        <th class="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Amount</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
+                </thead>
+                <tbody class="[&_tr:last-child]:border-0">
+                    @foreach (var item in _mockData)
+                    {
+                        <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                            <td class="p-4 align-middle font-medium">@item.PoNumber</td>
+                            <td class="p-4 align-middle">@item.VendorName</td>
+                            <td class="p-4 align-middle text-muted-foreground">@item.Date.ToShortDateString()</td>
+                            <td class="p-4 align-middle">@item.ItemName</td>
+                            <td class="p-4 align-middle text-right">@item.Quantity</td>
+                            <td class="p-4 align-middle text-right">@item.UnitPrice.ToString("C")</td>
+                            <td class="p-4 align-middle text-right font-medium text-primary">@item.Amount.ToString("C")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </BbCardContent>
+</BbCard>
 
 @code {
     private List<PoData> _mockData = new()

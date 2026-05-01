@@ -1,5 +1,6 @@
 using Portfolio.Admin.Components;
 using Portfolio.Admin.Services;
+using BlazorBlueprint.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,7 @@ builder.Services.AddHttpClient("PortfolioAPI", client =>
     client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]!);
 });
 builder.Services.AddScoped<BlogApiService>();
+builder.Services.AddBlazorBlueprintComponents();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -3,6 +3,7 @@
 @using Portfolio.Admin.Models.Blog
 @using Portfolio.Admin.Components.Shared
 @using Portfolio.Admin.Services
+@using BlazorBlueprint.Components
 
 @inject BlogApiService BlogService
 @inject NavigationManager Navigation
@@ -16,102 +17,106 @@
         </div>
         <h2 class="page-title">Blog Management</h2>
     </div>
-    <button class="btn-primary btn-action bg-primary" @onclick="CreateNewBlog">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+    <BbButton Variant="ButtonVariant.Default" OnClick="CreateNewBlog">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
         Create New
-    </button>
+    </BbButton>
 </div>
 
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title">All Blogs</h3>
-        <div class="filters-bar" style="margin-bottom: 0;">
-            <div class="filter-input">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <input type="text" class="form-control" placeholder="Search blogs..." />
-            </div>
+<BbCard>
+    <div style="padding: 1rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 300px; max-width: 400px;">
+            <BbInput @bind-Value="_searchText" Placeholder="Search blog posts..." />
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+            <BbButton Variant="ButtonVariant.Outline">Filter</BbButton>
+            <BbButton Variant="ButtonVariant.Outline">Export</BbButton>
         </div>
     </div>
 
-    @if (_loading)
-    {
-        <div class="state-container">
-            <div class="spinner"></div>
-            <p>Loading your blogs...</p>
-        </div>
-    }
-    else if (!_blogs.Any())
-    {
-        <div class="state-container">
-            <svg class="state-icon" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-            <h3 class="state-title">No blogs found</h3>
-            <p>You haven't written any blogs yet. Create one to get started.</p>
-        </div>
-    }
-    else
-    {
-        <div class="table-responsive">
-            <table class="saas-table">
-                <thead>
+    <div style="overflow-x: auto;">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="border-b transition-colors hover:bg-muted/50">
+                    <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Title</th>
+                    <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Status</th>
+                    <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Created At</th>
+                    <th class="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (_loading)
+                {
                     <tr>
-                        <th>Title</th>
-                        <th>Status</th>
-                        <th>Created Date</th>
-                        <th style="text-align: right;">Actions</th>
+                        <td colspan="4" class="p-8 text-center">
+                            <div class="spinner" style="width: 24px; height: 24px; margin: 0 auto 1rem auto;"></div>
+                            <p class="text-muted-foreground">Loading blogs...</p>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
+                }
+                else if (!_blogs.Any())
+                {
+                    <tr>
+                        <td colspan="4" class="p-8 text-center text-muted-foreground">
+                            No blog posts found.
+                        </td>
+                    </tr>
+                }
+                else
+                {
                     @foreach (var blog in _blogs)
                     {
-                        <tr>
-                            <td style="font-weight: 500;">@blog.Title</td>
-                            <td>
-                                <span class="badge @(blog.IsPublished ? "badge-success" : "badge-warning")">
-                                    @(blog.IsPublished ? "Published" : "Draft")
-                                </span>
+                        <tr class="border-b transition-colors hover:bg-muted/50">
+                            <td class="p-4 align-middle">
+                                <div style="display: flex; flex-direction: column;">
+                                    <span style="font-weight: 500; color: var(--foreground);">@blog.Title</span>
+                                    <span style="font-size: 0.75rem; color: var(--muted-foreground); max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">@blog.ShortDescription</span>
+                                </div>
                             </td>
-                            <td style="color: var(--text-muted);">@blog.CreatedAt.ToShortDateString()</td>
-                            <td style="text-align: right;">
-                                <button class="btn-action btn-action-view" style="color: #6b7280;" @onclick="() => ViewBlog(blog.Id)" title="View">
-                                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                                    View
-                                </button>
-                                <button class="btn-action btn-action-edit" @onclick="() => EditBlog(blog.Id)" title="Edit">
-                                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                                    Edit
-                                </button>
-                                <button class="btn-action btn-action-delete" @onclick="() => ConfirmDelete(blog.Id)" title="Delete">
-                                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-                                    Delete
-                                </button>
+                            <td class="p-4 align-middle">
+                                @if (blog.IsPublished)
+                                {
+                                    <span class="badge badge-success">Published</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-warning">Draft</span>
+                                }
+                            </td>
+                            <td class="p-4 align-middle text-muted-foreground">@blog.CreatedAt.ToShortDateString()</td>
+                            <td class="p-4 align-middle">
+                                <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                                    <BbButton Variant="ButtonVariant.Outline" OnClick="() => ViewBlog(blog.Id)">View</BbButton>
+                                    <BbButton Variant="ButtonVariant.Secondary" OnClick="() => EditBlog(blog.Id)">Edit</BbButton>
+                                    <BbButton Variant="ButtonVariant.Destructive" OnClick="() => ConfirmDelete(blog.Id)">Delete</BbButton>
+                                </div>
                             </td>
                         </tr>
                     }
-                </tbody>
-            </table>
-        </div>
-    }
-</div>
+                }
+            </tbody>
+        </table>
+    </div>
+</BbCard>
 
-<AlertDialog Message="@_dialogMessage"
-             Type="@_dialogType"
-             Visible="@_dialogVisible"
-             ShowCancel="@(_dialogType == "warning")"
+<AlertDialog Message="@_message" 
+             Type="@_messageType" 
+             Visible="@_showDialog" 
+             ShowCancel="@_showCancel"
              OnClose="HandleDialogClose" />
 
 @code {
 
     private List<BlogResponse> _blogs = new();
+    private string _searchText = "";
 
     private bool _loading = true;
 
-    private bool _dialogVisible = false;
-
-    private string _dialogMessage = "";
-
-    private string _dialogType = "success";
-
-    private Guid _blogToDelete;
+    private bool _showDialog = false;
+    private bool _showCancel = false;
+    private string _message = "";
+    private string _messageType = "success";
+    private Guid? _blogToDelete;
 
     protected override async Task OnInitializedAsync()
     {
@@ -122,18 +127,18 @@
     {
         try
         {
+            _loading = true;
             _blogs = await BlogService.GetBlogsAsync();
         }
         catch (Exception ex)
         {
-            _dialogMessage = ex.Message;
-            _dialogType = "error";
-            _dialogVisible = true;
+            _message = "Failed to load blogs: " + ex.Message;
+            _messageType = "error";
+            _showDialog = true;
         }
         finally
         {
             _loading = false;
-            StateHasChanged();
         }
     }
 
@@ -155,34 +160,40 @@
     private void ConfirmDelete(Guid id)
     {
         _blogToDelete = id;
-
-        _dialogMessage = "Are you sure you want to delete this blog?";
-        _dialogType = "warning";
-
-        _dialogVisible = true;
+        _message = "Are you sure you want to delete this blog?";
+        _messageType = "warning";
+        _showCancel = true;
+        _showDialog = true;
     }
 
-    private async void HandleDialogClose(bool confirmed)
+    private async Task HandleDialogClose(bool result)
     {
-        _dialogVisible = false;
-
-        if (_dialogType == "warning" && confirmed)
+        _showDialog = false;
+        
+        if (result && _blogToDelete.HasValue)
         {
             try
             {
-                await BlogService.DeleteBlogAsync(_blogToDelete);
-
+                await BlogService.DeleteBlogAsync(_blogToDelete.Value);
                 await LoadBlogs();
+                _message = "Blog deleted successfully!";
+                _messageType = "success";
+                _showCancel = false;
+                _showDialog = true;
+                _blogToDelete = null;
             }
             catch (Exception ex)
             {
-                _dialogMessage = ex.Message;
-                _dialogType = "error";
-                _dialogVisible = true;
+                _message = "Delete failed: " + ex.Message;
+                _messageType = "error";
+                _showCancel = false;
+                _showDialog = true;
             }
         }
-        
-        StateHasChanged();
+        else
+        {
+            _blogToDelete = null;
+            _showCancel = false;
+        }
     }
-
 }

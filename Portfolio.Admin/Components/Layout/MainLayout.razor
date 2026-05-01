@@ -1,3 +1,4 @@
+@using BlazorBlueprint.Primitives.Services
 @inherits LayoutComponentBase
 
 <div class="app-layout">
@@ -23,6 +24,14 @@
                 @Body
             </article>
         </main>
+        <!-- Required for portal-based components (Popover, Dialog, Select, etc.) -->
+        <BbPortalHost />
+
+        <!-- Required if you use ToastService to show toasts -->
+        <BbToastProvider />
+
+        <!-- Required if you use DialogService for programmatic confirm dialogs -->
+        <BbDialogProvider />
     </div>
 </div>
 

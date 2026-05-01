@@ -2,82 +2,78 @@
 @inject NavigationManager Navigation
 
 <EditForm Model="Model" OnValidSubmit="HandleSubmit" FormName="BlogCreateForm" method="post">
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">General Information</h3>
-        </div>
-        <div class="card-body form-section">
-            <div class="form-group">
-                <label class="form-label">Title</label>
-                <InputText @bind-Value="Model.Title" class="form-control" placeholder="Enter an engaging title..." />
+    <BbCard Class="mb-6">
+        <BbCardHeader>
+            <BbCardTitle>General Information</BbCardTitle>
+        </BbCardHeader>
+        <BbCardContent Class="grid gap-6">
+            <div class="grid gap-2">
+                <label class="text-sm font-medium">Title</label>
+                <BbInput @bind-Value="Model.Title" Placeholder="Enter an engaging title..." />
             </div>
             
-            <div class="form-group">
-                <label class="form-label">Short Description</label>
-                <InputText @bind-Value="Model.ShortDescription" class="form-control" placeholder="A brief summary for the preview..." />
+            <div class="grid gap-2">
+                <label class="text-sm font-medium">Short Description</label>
+                <BbInput @bind-Value="Model.ShortDescription" Placeholder="A brief summary for the preview..." />
             </div>
             
-            <div class="form-group" style="grid-column: 1 / -1;">
-                <label class="form-label">Tags</label>
-                <InputText @bind-Value="Model.Tags" class="form-control" placeholder="e.g. C#, Blazor, WebDev" />
+            <div class="grid gap-2">
+                <label class="text-sm font-medium">Tags</label>
+                <BbInput @bind-Value="Model.Tags" Placeholder="e.g. C#, Blazor, WebDev" />
             </div>
-        </div>
-    </div>
+        </BbCardContent>
+    </BbCard>
     
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Content</h3>
-        </div>
-        <div class="card-body">
-            <div class="form-group">
-                <label class="form-label">HTML Content</label>
+    <BbCard Class="mb-6">
+        <BbCardHeader>
+            <BbCardTitle>Content</BbCardTitle>
+        </BbCardHeader>
+        <BbCardContent>
+            <div class="grid gap-2">
+                <label class="text-sm font-medium">HTML Content</label>
                 <Portfolio.Admin.Components.Shared.RichTextEditor @bind-Value="Model.HtmlContent" />
             </div>
-        </div>
-    </div>
+        </BbCardContent>
+    </BbCard>
     
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Media & Publishing</h3>
-        </div>
-        <div class="card-body form-section">
+    <BbCard Class="mb-6">
+        <BbCardHeader>
+            <BbCardTitle>Media & Publishing</BbCardTitle>
+        </BbCardHeader>
+        <BbCardContent Class="grid gap-6">
             @if (!string.IsNullOrEmpty(ExistingImageUrl))
             {
-                <div class="form-group" style="grid-column: 1 / -1; margin-bottom: 1.5rem;">
-                    <label class="form-label">Current Cover Image</label>
-                    <div>
-                        <img src="@ExistingImageUrl" alt="Cover Image" style="max-height: 200px; border-radius: 8px; border: 1px solid var(--border-color); object-fit: cover;" />
-                    </div>
+                <div class="grid gap-2">
+                    <label class="text-sm font-medium">Current Cover Image</label>
+                    <img src="@ExistingImageUrl" alt="Cover Image" class="max-h-48 rounded-md border object-cover" />
                 </div>
             }
             
-            <div class="form-group">
-                <label class="form-label">@(string.IsNullOrEmpty(ExistingImageUrl) ? "Cover Image" : "Upload New Cover Image")</label>
-                <InputFile OnChange="HandleFileChange" class="form-control" style="padding: 0.375rem 0.5rem;" />
+            <div class="grid gap-2">
+                <label class="text-sm font-medium">@(string.IsNullOrEmpty(ExistingImageUrl) ? "Cover Image" : "Upload New Cover Image")</label>
+                <InputFile OnChange="HandleFileChange" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" />
             </div>
             
-            <div class="form-group" style="flex-direction: row; align-items: center; gap: 0.75rem; margin-top: 1.5rem;">
-                <InputCheckbox @bind-Value="Model.IsPublished" id="isPublished" />
-                <label for="isPublished" class="form-label" style="margin-bottom: 0;">Publish immediately</label>
+            <div class="flex items-center space-x-2">
+                <BbCheckbox @bind-Checked="Model.IsPublished" Id="isPublished" />
+                <label for="isPublished" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-opacity-70">Publish immediately</label>
             </div>
-        </div>
-    </div>
+        </BbCardContent>
+    </BbCard>
     
-    <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-bottom: 2rem;">
-        <button type="button" class="btn-action" style="border: 1px solid var(--border-color); color: var(--text-color); padding: 0.5rem 1rem; border-radius: 6px;" @onclick="Cancel">
-            Cancel
-        </button>
-        <button type="submit" disabled="@IsSubmitting" class="btn-primary" style="display: flex; align-items: center; gap: 0.5rem;">
+    <div class="flex justify-end space-x-4 mb-8">
+        <BbButton Variant="ButtonVariant.Outline" OnClick="Cancel">Cancel</BbButton>
+        <BbButton Variant="ButtonVariant.Default" OnClick="HandleSubmit" Disabled="@IsSubmitting">
             @if (IsSubmitting)
             {
-                <div class="spinner" style="width: 16px; height: 16px; border-width: 2px; margin: 0;"></div>
+                <div class="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
                 <span>Saving...</span>
             }
             else
             {
                 <span>Save Blog Post</span>
             }
-        </button>
+        </BbButton>
     </div>
 </EditForm>
 

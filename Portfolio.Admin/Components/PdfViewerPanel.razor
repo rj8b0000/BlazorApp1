@@ -1,79 +1,106 @@
 @inject IJSRuntime JSRuntime
+@using BlazorBlueprint.Components
 
-<div class="card" style="height: 100%; display: flex; flex-direction: column;">
-    <div class="card-header" style="flex: 0 0 auto; display: flex; justify-content: space-between; align-items: center;">
-        <h3 class="card-title">Document Preview</h3>
-        <div>
-            <InputFile id="pdf-upload" OnChange="HandlePdfUpload" accept=".pdf" style="display: none;" />
-            <label for="pdf-upload" class="btn-primary btn-action bg-primary" style="cursor: pointer; margin: 0;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                Upload PDF
-            </label>
+<BbCard Class="h-full flex flex-col">
+    <BbCardHeader>
+        <div class="flex justify-between items-center w-full">
+            <BbCardTitle>Document Preview</BbCardTitle>
+            <div>
+                <InputFile id="pdf-upload-input"
+                           OnChange="HandlePdfUpload"
+                           accept=".pdf"
+                           style="display:none" />
+
+                @* Using standard HTML button with BbButton styling for maximum reliability *@
+                <button class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-primary text-primary-foreground hover:bg-primary/90 h-10 py-2 px-4"
+                        onclick="document.getElementById('pdf-upload-input').click()">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="16"
+                         height="16"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         class="mr-2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    Upload PDF
+                </button>
+            </div>
         </div>
-    </div>
+    </BbCardHeader>
     
-    <div style="flex: 1 1 auto; overflow: hidden; position: relative;">
+    <BbCardContent Class="flex-1 p-0 overflow-hidden relative min-h-[500px]">
         @if (!string.IsNullOrEmpty(_pdfObjectUrl))
         {
-            <iframe id="pdf-iframe" src="/pdfjs/web/viewer.html?file=@(_pdfObjectUrl)" style="width: 100%; height: 100%; border: none;"></iframe>
+            <iframe id="pdf-iframe" src="/pdfjs/web/viewer.html?file=@(_pdfObjectUrl)" class="w-full h-full border-none"></iframe>
         }
         else
         {
-            <div class="state-container" style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                <svg class="state-icon" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
-                <h3 class="state-title">No Document Selected</h3>
-                <p>Upload a PDF file to preview it here.</p>
+            <div class="flex flex-col justify-center items-center h-full text-center p-12">
+                <div class="bg-muted rounded-full p-4 mb-4">
+                    <svg class="text-muted-foreground" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+                </div>
+                <h3 class="text-lg font-semibold mb-2">No Document Selected</h3>
+                <p class="text-muted-foreground">Upload a PDF file to preview it here.</p>
             </div>
         }
-    </div>
-</div>
+    </BbCardContent>
+</BbCard>
 
 <script>
-    window.createObjectUrl = function(bytes, contentType) {
-        const blob = new Blob([new Uint8Array(bytes)], { type: contentType });
-        return URL.createObjectURL(blob);
-    };
-    
-    window.updatePdfIframe = function(url) {
-        const iframe = document.getElementById('pdf-iframe');
-        if (iframe && iframe.contentWindow && iframe.contentWindow.PDFViewerApplication) {
-            iframe.contentWindow.PDFViewerApplication.open({ url: url });
-        }
+    if (typeof window.createObjectUrl === 'undefined') {
+        window.createObjectUrl = function(bytes, contentType) {
+            const blob = new Blob([new Uint8Array(bytes)], { type: contentType });
+            return URL.createObjectURL(blob);
+        };
     }
 </script>
 
 @code {
-    private string _pdfObjectUrl = "";
+    private string _pdfObjectUrl = string.Empty;
 
     private async Task HandlePdfUpload(InputFileChangeEventArgs e)
     {
         var file = e.File;
-        if (file != null && file.ContentType == "application/pdf")
-        {
-            try
-            {
-                // Increase max allowed size if needed (currently set to 10MB)
-                using var stream = file.OpenReadStream(10 * 1024 * 1024);
-                using var memoryStream = new MemoryStream();
-                await stream.CopyToAsync(memoryStream);
-                var bytes = memoryStream.ToArray();
 
-                // Create object URL from byte array
-                var newUrl = await JSRuntime.InvokeAsync<string>("window.createObjectUrl", bytes, file.ContentType);
-                
-                if (string.IsNullOrEmpty(_pdfObjectUrl)) {
-                    _pdfObjectUrl = newUrl;
-                    StateHasChanged();
-                } else {
-                    _pdfObjectUrl = newUrl;
-                    // If iframe is already there, update it dynamically to prevent full reload
-                    await JSRuntime.InvokeVoidAsync("window.updatePdfIframe", _pdfObjectUrl);
-                }
-            }
-            catch (Exception ex)
+        if (file == null)
+            return;
+
+        if (file.ContentType != "application/pdf")
+        {
+            Console.WriteLine("Only PDF files are allowed.");
+            return;
+        }
+
+        try
+        {
+            using var stream = file.OpenReadStream(10 * 1024 * 1024);
+            using var memoryStream = new MemoryStream();
+            await stream.CopyToAsync(memoryStream);
+            var bytes = memoryStream.ToArray();
+
+            var newUrl = await JSRuntime.InvokeAsync<string>(
+                "createObjectUrl",
+                bytes,
+                file.ContentType
+            );
+
+            if (!string.IsNullOrWhiteSpace(_pdfObjectUrl))
             {
-                Console.WriteLine($"Error uploading file: {ex.Message}");
+                await JSRuntime.InvokeVoidAsync("URL.revokeObjectURL", _pdfObjectUrl);
             }
+
+            _pdfObjectUrl = newUrl;
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error uploading PDF: {ex.Message}");
         }
     }
 }

@@ -2,26 +2,24 @@
 
 @if (Visible)
 {
-    <div class="alert-overlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,.4); display: flex; justify-content: center; align-items: center; z-index: 9999;">
-        <div class="alert-box" style="background: white; padding: 1.5rem; border-radius: 8px; min-width: 320px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); display: flex; flex-direction: column; gap: 1.5rem;">
-
-            <div class="alert-message @Type" style="color: var(--text-color); font-weight: 500; font-size: 1rem; text-align: center;">
+    <div class="alert-overlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,.6); display: flex; justify-content: center; align-items: center; z-index: 9999;">
+        <BbCard Class="w-full max-w-sm p-6 flex flex-col gap-6 shadow-xl">
+            <div class="alert-message @Type" style="color: var(--foreground); font-weight: 500; font-size: 1.1rem; text-align: center;">
                 @Message
             </div>
 
             <div style="display: flex; justify-content: center; gap: 0.75rem;">
                 @if (ShowCancel)
                 {
-                    <button class="btn-action" style="border: 1px solid var(--border-color); color: var(--text-color);" @onclick="() => CloseDialog(false)">
+                    <BbButton Variant="ButtonVariant.Outline" OnClick="() => CloseDialog(false)">
                         Cancel
-                    </button>
+                    </BbButton>
                 }
-                <button class="btn-primary" @onclick="() => CloseDialog(true)">
+                <BbButton Variant="ButtonVariant.Default" OnClick="() => CloseDialog(true)">
                     OK
-                </button>
+                </BbButton>
             </div>
-
-        </div>
+        </BbCard>
     </div>
 }
 

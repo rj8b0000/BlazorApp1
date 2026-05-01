@@ -2,6 +2,7 @@
 
 @using Portfolio.Admin.Models.Blog
 @using Portfolio.Admin.Services
+@using BlazorBlueprint.Components
 
 @inject BlogApiService BlogService
 @inject NavigationManager Navigation
@@ -19,13 +20,13 @@
         <h2 class="page-title">Blog Details</h2>
     </div>
     <div style="display: flex; gap: 1rem;">
-        <button class="btn-action" style="border: 1px solid var(--border-color); color: var(--text-color); padding: 0.5rem 1rem; border-radius: 6px;" @onclick="GoBack">
+        <BbButton Variant="ButtonVariant.Outline" OnClick="GoBack">
             Back to List
-        </button>
-        <button class="btn-primary btn-action" @onclick="EditBlog">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+        </BbButton>
+        <BbButton Variant="ButtonVariant.Default" OnClick="EditBlog">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
             Edit Blog
-        </button>
+        </BbButton>
     </div>
 </div>
 
@@ -39,78 +40,79 @@
 else if (!string.IsNullOrEmpty(_errorMessage))
 {
     <div class="state-container">
-        <p style="color: #ef4444;">@_errorMessage</p>
+        <p style="color: var(--destructive);">@_errorMessage</p>
     </div>
 }
 else if (_blog != null)
 {
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">General Information</h3>
-            <span class="badge @(_blog.IsPublished ? "badge-success" : "badge-warning")">
-                @(_blog.IsPublished ? "Published" : "Draft")
-            </span>
-        </div>
-        <div class="card-body form-section">
-            <div class="form-group">
-                <label class="form-label" style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase;">Title</label>
-                <div style="font-size: 1rem; font-weight: 500;">@_blog.Title</div>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label" style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase;">Short Description</label>
-                <div>@_blog.ShortDescription</div>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label" style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase;">Slug</label>
-                <div>@_blog.Slug</div>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label" style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase;">Created At</label>
-                <div>@_blog.CreatedAt.ToString("MMMM dd, yyyy hh:mm tt")</div>
-            </div>
-
-            <div class="form-group" style="grid-column: 1 / -1;">
-                <label class="form-label" style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase;">Tags</label>
-                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                    @foreach (var tag in _blog.Tags.Split(',', StringSplitOptions.RemoveEmptyEntries))
-                    {
-                        <span style="background-color: #f1f5f9; color: #475569; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.875rem;">
-                            @tag.Trim()
-                        </span>
-                    }
+    <div class="grid gap-6">
+        <BbCard>
+            <BbCardHeader>
+                <div class="flex items-center justify-between">
+                    <BbCardTitle>General Information</BbCardTitle>
+                    <span class="badge @(_blog.IsPublished ? "badge-success" : "badge-warning")">
+                        @(_blog.IsPublished ? "Published" : "Draft")
+                    </span>
                 </div>
-            </div>
-        </div>
-    </div>
+            </BbCardHeader>
+            <BbCardContent Class="grid gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Title</label>
+                        <div class="text-lg font-medium">@_blog.Title</div>
+                    </div>
+                    
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Created At</label>
+                        <div>@_blog.CreatedAt.ToString("MMMM dd, yyyy hh:mm tt")</div>
+                    </div>
 
-    @if (!string.IsNullOrEmpty(_blog.CoverImageUrl))
-    {
-        var imgUrl = _blog.CoverImageUrl.StartsWith("http") 
-            ? _blog.CoverImageUrl 
-            : $"{Configuration["ApiSettings:BaseUrl"]?.TrimEnd('/')}/{_blog.CoverImageUrl.TrimStart('/')}";
+                    <div class="space-y-1 md:col-span-2">
+                        <label class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Short Description</label>
+                        <div class="text-muted-foreground">@_blog.ShortDescription</div>
+                    </div>
+                    
+                    <div class="space-y-1 md:col-span-2">
+                        <label class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Tags</label>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach (var tag in _blog.Tags.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                            {
+                                <span class="bg-secondary text-secondary-foreground px-2 py-1 rounded text-xs font-medium">
+                                    @tag.Trim()
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </BbCardContent>
+        </BbCard>
 
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Cover Image</h3>
-            </div>
-            <div class="card-body">
-                <img src="@imgUrl" alt="Cover" style="max-width: 100%; border-radius: 8px; border: 1px solid var(--border-color); object-fit: cover; max-height: 400px;" />
-            </div>
-        </div>
-    }
+        @if (!string.IsNullOrEmpty(_blog.CoverImageUrl))
+        {
+            var imgUrl = _blog.CoverImageUrl.StartsWith("http") 
+                ? _blog.CoverImageUrl 
+                : $"{Configuration["ApiSettings:BaseUrl"]?.TrimEnd('/')}/{_blog.CoverImageUrl.TrimStart('/')}";
 
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Content</h3>
-        </div>
-        <div class="card-body">
-            <div style="padding: 1rem; border: 1px solid var(--border-color); border-radius: 8px; background-color: #fff; min-height: 200px;">
-                @((MarkupString)_blog.HtmlContent)
-            </div>
-        </div>
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle>Cover Image</BbCardTitle>
+                </BbCardHeader>
+                <BbCardContent>
+                    <img src="@imgUrl" alt="Cover" class="max-w-full rounded-lg border object-cover max-h-[400px] bg-muted w-full" />
+                </BbCardContent>
+            </BbCard>
+        }
+
+        <BbCard>
+            <BbCardHeader>
+                <BbCardTitle>Content Preview</BbCardTitle>
+            </BbCardHeader>
+            <BbCardContent>
+                <div class="p-6 border rounded-lg bg-card min-h-[200px] prose dark:prose-invert max-w-none">
+                    @((MarkupString)_blog.HtmlContent)
+                </div>
+            </BbCardContent>
+        </BbCard>
     </div>
 }
 
