@@ -98,7 +98,9 @@ else if (_blog != null)
                     <BbCardTitle>Cover Image</BbCardTitle>
                 </BbCardHeader>
                 <BbCardContent>
-                    <img src="@imgUrl" alt="Cover" class="max-w-full rounded-lg border object-cover max-h-[400px] bg-muted w-full" />
+                    <div class="flex justify-center">
+                        <img src="@imgUrl" alt="Cover" class="rounded-lg border object-cover max-h-[250px] max-w-full md:max-w-[400px] bg-muted shadow-sm" />
+                    </div>
                 </BbCardContent>
             </BbCard>
         }
